@@ -1,6 +1,8 @@
 package hole
 
 import (
+	"fmt"
+	"gonum.org/v1/gonum/mathext"
 	"math"
 	"math/rand"
 	"strconv"
@@ -8,16 +10,17 @@ import (
 )
 
 func perimeter(ai, bi int) (p float64) {
-	var n float64
 	a, b := float64(ai), float64(bi)
-	h := math.Pow(a-b, 2) / math.Pow(a+b, 2)
-	var bin float64
-	for ni := 0; ni < 100; ni++ {
-		n = float64(ni)
-		bin = math.Gamma(1.5) / (math.Gamma(1.0+n) * math.Gamma(1.5-n))
-		p += math.Pow(bin, 2) * math.Pow(h, n)
+	if a < b {
+		a, b = b, a
 	}
-	p *= math.Pi * (a + b)
+	return 4 * a * mathext.CompleteE(1-math.Pow(b, 2)/math.Pow(a, 2))
+}
+
+func getTest(rlim int) (a, b int, p string) {
+	a = rand.Intn(rlim) + 1
+	b = rand.Intn(rlim) + 1
+	p = fmt.Sprintf("%.10f", perimeter(a, b))
 	return
 }
 
@@ -25,15 +28,16 @@ func ellipsePerimeters() (args []string, out string) {
 	var outs []string
 
 	// some random tests
-	var a, b int
-	var p float64
-	for i := 0; i < 10; i++ {
-		a = rand.Intn(15) + 5
-		b = rand.Intn(5) + 1
-		args = append(args, strconv.Itoa(a)+" "+strconv.Itoa(b))
+	var a, b, rlim int
+	var p string
 
-		p = perimeter(a, b)
-		outs = append(outs, strconv.Itoa(int(p)))
+	for _, n := range []float64{1, 2, 3} {
+		for i := 0; i < 3; i++ {
+			rlim = int(math.Pow(10.0, n))
+			a, b, p = getTest(rlim)
+			args = append(args, strconv.Itoa(a)+" "+strconv.Itoa(b))
+			outs = append(outs, p)
+		}
 	}
 
 	rand.Shuffle(len(args), func(i, j int) {
