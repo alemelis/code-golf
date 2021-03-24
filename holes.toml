@@ -638,8 +638,7 @@ links = [
 experiment = -1
 preamble = '''
 <p>
-    Given the two radii of an ellipse, compute its perimeter and print
-    its integer part.
+    Given the two radii of an ellipse, compute its perimeter with 10 decimal places.
 '''
 
 [Emojify]
